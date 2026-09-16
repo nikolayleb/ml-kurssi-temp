@@ -1,15 +1,14 @@
-# Johdanto / Introduction
+# Johdanto
 
-**Nikolay Lebedev**
+**Tekijä:** Nikolay Lebedev  
+**Kurssi:** Johdatus koneoppimiseen (TT00CC61-3005)
 
-Kirjoita tähän lyhyt Johdanto. Mitä aiempaa kokemusta tai tietämystä sinulla on kurssin aiheista? Mitä odotat kurssilta? Tämä on oppimispäiväkirja, minkä takia Johdanto on hyvä kirjoittaa heti alussa, jotta voit palata siihen myöhemmin ja arvioida, miten odotuksesi ja kokemuksesi ovat muuttuneet kurssin aikana.
+## Tausta
 
-Muista lukea [Oppimispäiväkirja 101](https://sourander.github.io/oat/) ohjeet huolella. Ohjeiden noudattamatta jättäminen laskee arvosanaasi.
+Minulla ei ole vielä alan työkokemusta. Olen opiskellut Python-ohjelmointia itsenäisesti sekä datanomin perustutkinnon opinnoissa. Käytännön harjoituksena olen koodannut Pythonilla muutamia yksinkertaisia pelejä.
 
-!!! warning
+## Tavoitteet ja odotukset
 
-    Älä nimeä tätä `index.md`-tiedostoa uusiksi! Material for MkDocs ei toimi, jos aloitussivua (index.md) ei löydy.
+Tavoitteenani on ymmärtää koneoppimisen perusperiaatteet ja logiikka niin syvällisesti ja selkeästi, että osaisin selittää ne kenelle tahansa — vaikkapa viisivuotiaalle lapselle (tai omassa tapauksessani 14-vuotiaalle pojalleni). 
 
-## Kirjoita suomeksi
-
-Kirjoita lähtökohtaisesi suomeksi. Jos äidinkielesi on muu kuin suomi, voit kirjoittaa koko oppimispäiväkirjan englanniksi.
+Odotan kurssilta selkeää käsitystä siitä, mitä koneoppiminen käytännössä on, mihin sitä sovelletaan ja miten perusmallit toimivat ilman liian raskasta tai sekavaa teoriaa. Pyrin tekemään harjoitukset säännöllisesti ja tallentamaan oppimisprosessini tähän päiväkirjaan viikko kerrallaan.

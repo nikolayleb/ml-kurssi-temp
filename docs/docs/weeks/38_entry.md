@@ -1,19 +1,51 @@
-# 38: Ensimmäisen viikon otsikko
+# Viikko 38: Johdatus koneoppimiseen
 
-## Jokin otsikko
+## 1. Peruskäsitteet ja hierarkia
 
-Kirjoita tähän tiedostoon ensimmäinen teemamerkintä. Sen rakenteeseen saat neuvoa [Oppimispäiväkirja 101 > Oppimispäiävkirjan rakenne](https://sourander.github.io/oat/weeks/01_rakenne/) -sivulta. Tiedosto on nimetty ja otsikoitu automaattisesti sillä ajankohdalla, kun alustit oppimispäiväkirjasi Cookiecutter-templaatilla. Nyt on oletus, että on: 38/2026.
+Tällä viikolla luin materiaalit tekoälyn perusteista. Tärkein juttu on se että AI ja koneoppiminen ei ole sama asia:
+* **Tekoäly (AI)** on iso yläkäsite. Se voi olla vain tavallinen koodi ja `if-else` säännöt, esimerkiksi shakkipeli tai A* haku ilman mitään oppimista.
+* **Koneoppiminen (ML)** on osa tekoälyä. Tässä kone oppii suoraan datasta ja kokemuksesta (Tom Mitchellin kaava: T, P ja E). Ennen vanhaan Suomessa puhuttiin hahmontunnistuksesta.
+* **Syväoppiminen (Deep learning)** on neuroverkkoja. Kurssilla sanottiin selvästi että niitä ei käsitellä nyt, vaan keskitytään 90-luvun klassisiin malleihin.
 
-Muita käyttää kuvia, taulukoita ja koodilohkoja apunasi. Käytä myös selkeää otsikkorakennetta. Alla on esimerkki kuvasta (ks. Kuva 1). Kuvatekstissä on hyvä selittää, mitä kuvassa on ja miksi se on relevantti. Kuvatekstissä tulee mainita myös lähde, jos kuva on lainattu muualta. Muista lisätä Vancouver-tyyliset lähdeviitteet tiedoston loppuun. Esimerkki tässä [^abc]. Toinen esimerkki tässä [^iana]. Ja kolmas vielä kiellon päälle [^geronpytorch].
+## 2. Kolme oppimistyyppiä
 
-![Placeholder image](../images/placeholder.svg)
+Koneoppiminen jaetaan kolmeen osaan:
+1. **Ohjattu oppiminen (Supervised):** Meillä on $X$ (piirteet) ja tiedetään oikea vastaus $y$. Se on joko luokittelu (onko kissa vai koira) tai regressio (talon hinta numeroina).
+2. **Ohjaamaton oppiminen (Unsupervised):** Ei ole valmiita vastauksia. Etsitään vain ryhmiä datasta, kuten t-paitojen koot S, M, L klusteroinnilla tai etsitään poikkeamia palvelimen lämpötilasta.
+3. **Vahvistusoppiminen (Reinforcement):** Ei ole valmista datasettiä. Botti kokeilee itse ympäristössä ja saa pisteitä tai miinusta, kuten Pac-Man pelissä tai autopelissä.
 
-**Kuva 1:** *Tämä on esimerkki kuvatekstistä.*
+Ero algoritmin ja mallin välillä: algoritmi on vain kaava tai koodikirjaston työkalu, mutta malli on se valmis lopputulos kun algoritmi on ajettu datan läpi ja se oppi parametrit.
 
-## Lähteet
+## 3. Data ja piirteet (Feature extraction)
 
-[^abc]: (Tekijät). *Lähteen otsikko*. (mistä työn löytää)
+Tietokone ei ymmärrä kuvia tai tekstiä sellaisenaan. Neuroverkot voi ottaa suoraan pikseleitä, mutta klassisessa ML:ssä ihmisen pitää itse tehdä piirteet (features). Esimerkiksi lomakuvista lasketaan vihreän värin määrä tai reunat, ja annetaan mallille vain lista numeroita.
 
-[^iana]: IANA. Example domain. https://www.example.com/
+Opiskeltiin myös neljä mittaustasoa:
+* Nominaalinen: nimet ilman järjestystä (esim. automerkit). Pitää muuttaa One-hot koodauksella numeroiksi.
+* Ordinaalinen: selkeä järjestys mutta ei välimatkaa (koot S, M, L tai työpaikan roolit).
+* Intervalli: kuten Celsius-asteet, nolla ei tarkoita ettei lämpöä ole.
+* Suhdeasteikko: normaali numero missä nolla on oikeasti nolla (pituus, paino, eurot).
 
-[^geronpytorch]: Géron, A. Hands-On Machine Learning with Scikit-Learn and PyTorch. O'Reilly. 2025.
+## 4. Työnkulku ja kurssin esimerkkikoodit
+
+Projektin vaiheet menee yleensä näin: ongelman määrittely -> datan haku -> tutkiminen (EDA) -> esikäsittely -> mallien kokeilu -> säätö -> esittely -> käyttöönotto. Datan laatu on tärkeämpää kuin hieno malli. Myöhemmin malli voi myös vanheta (model drift), joten se pitää opettaa uudestaan.
+
+Pohjustin kehitysympäristön ja kloonasin kurssin notebookit omaan kansioon. Katsoin läpi tiedostoja `130_data_handling_basics.py` ja `131_vector_from_scratch.py`. Huomasin miten puhdas Python-luokka ja for-loopit ovat hitaita vektorilaskennassa, ja miksi NumPy tekee samat asiat paljon nopeammin vektoroidusti. Polars taas vaikuttaa kätevältä ja nopeammalta tavalta käsitellä taulukoita kuin vanha Pandas.
+
+Työnkulku-luvussa oli myös hyvä esimerkki siitä miten mallia tuunataan (hyperparameter tuning) ja miksi ristiinvalidointia (cross-validation) tarvitaan:
+
+```python
+# Esimerkki kurssimateriaalista: parametrien haarukointi ja cross-validation
+alpha_grid = [0.1, 0.5, 1.0, 1.5, 2.0]
+
+for alpha in alpha_grid:
+    clf = linear_model.Lasso(alpha=alpha)
+    scores = cross_val_score(clf, X_train, y_train, cv=5)
+    print(f"Alpha: {alpha}, Scores: {scores}")
+ ```
+
+Ideana on testata eri alpha-arvot viidessä osassa (cv=5), jotta malli ei opi testidataa ulkoa vaan osaa ennustaa uutta dataa.
+
+## 5. Oma pohdinta
+
+Viikon tärkein asia oli tajuta että koneoppiminen ei ole taikuutta vaan numeroiden optimointia. Jos data on huonoa tai luokkia on liian vähän, malli ei toimi (kuten materiaalissa ollut lotto-esimerkki `return False`). Oli hyvä huomata että klassisissa malleissa pitää itse miettiä piirteet eikä vain laittaa raakadataa sisään. Työkalut on nyt asennettu ja tästä on hyvä jatkaa eteenpäin.
