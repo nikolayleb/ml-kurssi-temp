@@ -34,15 +34,13 @@ Pohjustin kehitysympäristön ja kloonasin kurssin notebookit omaan kansioon. Ka
 
 Työnkulku-luvussa oli myös hyvä esimerkki siitä miten mallia tuunataan (hyperparameter tuning) ja miksi ristiinvalidointia (cross-validation) tarvitaan:
 
-```python
 # Esimerkki kurssimateriaalista: parametrien haarukointi ja cross-validation
-alpha_grid = [0.1, 0.5, 1.0, 1.5, 2.0]
+    alpha_grid = [0.1, 0.5, 1.0, 1.5, 2.0]
 
-for alpha in alpha_grid:
-    clf = linear_model.Lasso(alpha=alpha)
-    scores = cross_val_score(clf, X_train, y_train, cv=5)
-    print(f"Alpha: {alpha}, Scores: {scores}")
- ```
+    for alpha in alpha_grid:
+        clf = linear_model.Lasso(alpha=alpha)
+        scores = cross_val_score(clf, X_train, y_train, cv=5)
+        print(f"Alpha: {alpha}, Scores: {scores}")
 
 Ideana on testata eri alpha-arvot viidessä osassa (cv=5), jotta malli ei opi testidataa ulkoa vaan osaa ennustaa uutta dataa.
 
