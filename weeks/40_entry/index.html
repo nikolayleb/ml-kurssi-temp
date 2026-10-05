@@ -415,6 +415,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2-paatospuu-alusta-alkaen-decision-tree-from-scratch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Päätöspuu alusta alkaen (Decision Tree from Scratch)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -512,6 +523,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2-paatospuu-alusta-alkaen-decision-tree-from-scratch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Päätöspuu alusta alkaen (Decision Tree from Scratch)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -547,6 +569,15 @@
 * <strong>ROC-AUC:</strong> 0.6902
 * <strong>PR-AUC:</strong> 0.6940</p>
 <p>Tulos osoittaa selvästi sen, että kohinan takia malli tekee enemmän virheitä eikä pysty ennustamaan kaikkea oikein.</p>
+<h2 id="2-paatospuu-alusta-alkaen-decision-tree-from-scratch">2. Päätöspuu alusta alkaen (Decision Tree from Scratch)</h2>
+<p>Toisessa tehtävässä (<code>320_puu_from_scratch.py</code>) tein päätöspuun puhtaalla Pythonilla ilman valmiita kirjastoja.</p>
+<p>Puu valitsee haarautumiset entropian ja informaatiokasvun (Information Gain) avulla. Malli ennustaa, kannattaako kulkea autolla vai pyörällä (<code>go_by_car</code>). Tärkeimmät piirteet olivat vaadittu nopeus (<code>required_speed</code>) sekä se, onko perillä suihkua (<code>dst_has_shower</code>).</p>
+<p>Opetin mallia 293 rivillä dataa. Testasin sitä erillisellä 100 rivin testidatalla:</p>
+<p><img alt="Päätöspuun testitulokset" src="../../images/tree_scratch_results.png" /></p>
+<p>Tulokset:
+* <strong>Accuracy:</strong> 0.98 (noin 98 % ennusteista meni oikein).
+* <strong>Sekaannusmatriisi:</strong> TP: 71, FP: 2, FN: 0, TN: 27. Malli teki vain kaksi virhettä sadasta tapauksesta.
+* Tärkein tekijä oli nopeus. Jos vaadittu nopeus oli yli 19.6 km/h, puu valitsi aina auton.</p>
 
 
 
