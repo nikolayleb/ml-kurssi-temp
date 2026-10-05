@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.21.1"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -437,12 +437,12 @@ def _(mo):
 
 
 @app.cell
-def _():
+def _(build_tree, read_jsonl):
     # Run against the test data
     print("\n==== Training with a larger dataset begins ====\n")
-    data_train = ... # Implement
-    data_test = ...  # Implement 
-    tree_293 = ...   # Implement
+    data_train = read_jsonl(Path("data/bike_or_car/293_train.jsonl"))
+    data_test = read_jsonl(Path("data/bike_or_car/100_test.jsonl"))
+    tree_293 = build_tree(data_train, max_depth=4, verbose=False)
     return data_test, tree_293
 
 
