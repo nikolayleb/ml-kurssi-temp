@@ -431,6 +431,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#3-vihapuheen-tunnistaminen-naive-bayes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Vihapuheen tunnistaminen (Naive Bayes)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Vihapuheen tunnistaminen (Naive Bayes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#datan-tarkastelu-ja-luokkien-epatasapaino" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Datan tarkastelu ja luokkien epätasapaino
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#datan-siivous-ja-mallin-opetus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Datan siivous ja mallin opetus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testitulokset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testitulokset
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -572,6 +622,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#3-vihapuheen-tunnistaminen-naive-bayes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Vihapuheen tunnistaminen (Naive Bayes)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Vihapuheen tunnistaminen (Naive Bayes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#datan-tarkastelu-ja-luokkien-epatasapaino" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Datan tarkastelu ja luokkien epätasapaino
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#datan-siivous-ja-mallin-opetus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Datan siivous ja mallin opetus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testitulokset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testitulokset
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -613,6 +713,25 @@
 <p>Kun lisäsin uudet ehdot koodiin, laskenta meni läpi ilman virheitä.</p>
 <p><img alt="Naive Bayes tulos" src="../../images/bayes_result.png" /></p>
 <p>Lopullinen todennäköisyys oli <strong>0.00</strong>. Tulos on järkevä, koska opiskelija harvoin tienaa yli 70 000 euroa ja toimii samaan aikaan ylempänä toimihenkilönä. Pääasia kuitenkin oli, että malli pystyi laskemaan todennäköisyyden ilman nollalla jakamista.</p>
+<h2 id="3-vihapuheen-tunnistaminen-naive-bayes">3. Vihapuheen tunnistaminen (Naive Bayes)</h2>
+<p>Harjoituksen kolmannessa osassa tein mallin, joka tunnistaa vihapuhetta Twitter-viesteistä. Käytin mallina Multinomial Naive Bayes -menetelmää. Aineistona oli valmis tiedosto <code>labeled_data.csv</code>.</p>
+<h3 id="datan-tarkastelu-ja-luokkien-epatasapaino">Datan tarkastelu ja luokkien epätasapaino</h3>
+<p>Tehtävänä oli tehdä binäärinen luokittelu. Viesti on joko vihapuhetta (1) tai se ei ole vihapuhetta (0). Neutraaleja tai pelkästään loukkaavia viestejä en ottanut mukaan analyysiin.</p>
+<p><img alt="Luokkien epätasapaino" src="../../images/nb_class_imbalance.png" /></p>
+<p>Kuten kuvaajasta näkyy, tavallisia viestejä (luokka 0) on paljon enemmän kuin vihapuhetta (luokka 1). Luokat ovat siis epätasapainossa. Tämän takia pelkkä kokonaistarkkuus (accuracy) ei riitä, vaan pitää katsoa myös F1-tulosta ja saantia (recall).</p>
+<h3 id="datan-siivous-ja-mallin-opetus">Datan siivous ja mallin opetus</h3>
+<p>Ennen mallin opettamista siivosin twiiteistä turhat asiat pois. Poistin linkit, käyttäjänimet (@-merkit) ja välimerkit.</p>
+<p>Kokeilin harjoituksessa kahta eri versiota:
+* <strong>Perusmalli:</strong> sanat laskettiin yksitellen (unigrammit).
+* <strong>Parannettu malli:</strong> otin mukaan myös sanaparit (bigrammit, <code>ngram_range=(1, 2)</code>). Sanaparit auttavat mallia huomaamaan paremmin sanojen yhteyksiä.</p>
+<h3 id="testitulokset">Testitulokset</h3>
+<p>Lopuksi testasin valmista mallia erillisellä testidatalla, jota se ei ollut nähnyt aiemmin:</p>
+<p><img alt="Luokitteluraportti" src="../../images/nb_classification_report.png" /></p>
+<ul>
+<li><strong>Kokonaistarkkuus (Accuracy):</strong> noin <strong>89.5 %</strong> (0.8945).</li>
+<li><strong>Tarkkuus vihapuheelle (Precision):</strong> <strong>0.96</strong>. Kun malli väittää viestiä vihapuheeksi, se osuu melkein aina oikeaan. Vääriä hälytyksiä tulee tosi vähän.</li>
+<li><strong>Saanti vihapuheelle (Recall):</strong> <strong>0.61</strong>. Malli löytää noin 61 % kaikesta vihapuheesta. Osa vihapuheesta jää siis huomaamatta luokkien epätasapainon takia.</li>
+</ul>
 
 
 

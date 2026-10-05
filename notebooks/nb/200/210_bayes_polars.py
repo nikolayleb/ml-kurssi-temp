@@ -241,16 +241,18 @@ def _(P_given, df, high_income):
     is_upper = pl.col("sose") == 3
     in_north = pl.col("suuralue12") == 4
     is_female = pl.col("sukup") == 2
+    is_student = pl.col("sose") == 6
+    is_fi = pl.col("kieli") == "fi"
 
-    conditioning_expr = high_income & in_north & is_female
+    conditioning_expr = high_income & in_north & is_female & is_student & is_fi
 
     P_direct = P_given(is_upper, conditioning_expr)
     if P_direct is None:
         print("Oh no! No lines passed the filter.")
     else:
-        print(f"P(upper white-collar | all_your_conditions) = {P_direct:.2f}") # 1.00
+        print(f"P(upper white-collar | all_your_conditions) = {P_direct:.2f}")
     df.filter(conditioning_expr)
-    return in_north, is_female, is_upper
+    return in_north, is_female, is_fi, is_student, is_upper
 
 
 @app.cell(hide_code=True)
@@ -356,7 +358,16 @@ def _(mo):
 
 
 @app.cell
-def _(P, P_given, high_income, in_north, is_female, is_upper):
+def _(
+    P,
+    P_given,
+    high_income,
+    in_north,
+    is_female,
+    is_fi,
+    is_student,
+    is_upper,
+):
     is_not_upper = ~is_upper
 
     def score(class_expr) -> float:
@@ -364,9 +375,11 @@ def _(P, P_given, high_income, in_north, is_female, is_upper):
         If you need more conditions, add them manually."""
         return (
             P(class_expr)
-            * P_given(high_income, class_expr) # Or: likelihood(class_expr, high_income)
+            * P_given(high_income, class_expr)
             * P_given(in_north, class_expr)
             * P_given(is_female, class_expr)
+            * P_given(is_student, class_expr)
+            * P_given(is_fi, class_expr)
         )
 
     score_upper = score(is_upper)
@@ -383,6 +396,7 @@ def _(P, P_given, high_income, in_north, is_female, is_upper):
         f"Unnormalized Naive Bayes score for not upper white-collar: {score_other:.6f}"
     )
     print(f"Normalized posterior probability: {posterior_upper_white_collar:.2f}")
+
     return
 
 

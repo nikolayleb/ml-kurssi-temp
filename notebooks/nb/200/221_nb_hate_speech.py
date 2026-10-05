@@ -301,7 +301,7 @@ def _(mo):
 def _(X_test, X_train, pipeline2, y_test, y_train):
     # Toggle this ONLY AS THE LAST STEP. You should not tune your
     # model against the test set. This is supposed to be fully unseen
-    I_AM_SURE_I_HAVE_CHOSEN_MY_HYPERPARAMETERS = False
+    I_AM_SURE_I_HAVE_CHOSEN_MY_HYPERPARAMETERS = True
 
     if I_AM_SURE_I_HAVE_CHOSEN_MY_HYPERPARAMETERS:
         best_pipeline = pipeline2 # <- CHANGE THIS

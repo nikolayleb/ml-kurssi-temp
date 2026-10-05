@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.21.1"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -357,7 +357,6 @@ def _(pr_thresholds, precisions, recalls):
     )
 
     _chart
-
     return
 
 
@@ -407,6 +406,38 @@ def _(mo):
 
     Obviously, this is dummy data, so classes 0 and 1 mean nothing. Let `1` be `is_banana`, and `0` a `not_banana`.
     """)
+    return
+
+
+@app.cell
+def _():
+
+    X_syn, y_syn = datasets.make_classification(
+        n_samples=1200,
+        n_features=20,
+        n_informative=4,
+        n_redundant=6,
+        n_repeated=0,
+        n_classes=2,
+        class_sep=0.7,  
+        random_state=160
+    )
+
+    X_tr, X_te, y_tr, y_te = train_test_split(X_syn, y_syn, test_size=0.3, random_state=160)
+
+
+    clf_syn = linear_model.LogisticRegression()
+    clf_syn.fit(X_tr, y_tr)
+    y_scores_syn = clf_syn.decision_function(X_te)
+
+    # 3. Посчитаем ROC-AUC и PR-AUC
+    roc_auc_val = metrics.roc_auc_score(y_te, y_scores_syn)
+    pr_auc_val = metrics.average_precision_score(y_te, y_scores_syn)
+
+    print(f"ROC-AUC: {roc_auc_val:.4f}")
+    print(f"PR-AUC (Average Precision): {pr_auc_val:.4f}")
+    print()
+    print(metrics.classification_report(y_te, clf_syn.predict(X_te)))
     return
 
 
