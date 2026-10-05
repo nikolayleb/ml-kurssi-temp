@@ -37,3 +37,33 @@ Kun lisäsin uudet ehdot koodiin, laskenta meni läpi ilman virheitä.
 ![Naive Bayes tulos](../images/bayes_result.png)
 
 Lopullinen todennäköisyys oli **0.00**. Tulos on järkevä, koska opiskelija harvoin tienaa yli 70 000 euroa ja toimii samaan aikaan ylempänä toimihenkilönä. Pääasia kuitenkin oli, että malli pystyi laskemaan todennäköisyyden ilman nollalla jakamista.
+
+## 3. Vihapuheen tunnistaminen (Naive Bayes)
+
+Harjoituksen kolmannessa osassa tein mallin, joka tunnistaa vihapuhetta Twitter-viesteistä. Käytin mallina Multinomial Naive Bayes -menetelmää. Aineistona oli valmis tiedosto `labeled_data.csv`.
+
+### Datan tarkastelu ja luokkien epätasapaino
+
+Tehtävänä oli tehdä binäärinen luokittelu. Viesti on joko vihapuhetta (1) tai se ei ole vihapuhetta (0). Neutraaleja tai pelkästään loukkaavia viestejä en ottanut mukaan analyysiin.
+
+![Luokkien epätasapaino](../images/nb_class_imbalance.png)
+
+Kuten kuvaajasta näkyy, tavallisia viestejä (luokka 0) on paljon enemmän kuin vihapuhetta (luokka 1). Luokat ovat siis epätasapainossa. Tämän takia pelkkä kokonaistarkkuus (accuracy) ei riitä, vaan pitää katsoa myös F1-tulosta ja saantia (recall).
+
+### Datan siivous ja mallin opetus
+
+Ennen mallin opettamista siivosin twiiteistä turhat asiat pois. Poistin linkit, käyttäjänimet (@-merkit) ja välimerkit.
+
+Kokeilin harjoituksessa kahta eri versiota:
+* **Perusmalli:** sanat laskettiin yksitellen (unigrammit).
+* **Parannettu malli:** otin mukaan myös sanaparit (bigrammit, `ngram_range=(1, 2)`). Sanaparit auttavat mallia huomaamaan paremmin sanojen yhteyksiä.
+
+### Testitulokset
+
+Lopuksi testasin valmista mallia erillisellä testidatalla, jota se ei ollut nähnyt aiemmin:
+
+![Luokitteluraportti](../images/nb_classification_report.png)
+
+* **Kokonaistarkkuus (Accuracy):** noin **89.5 %** (0.8945).
+* **Tarkkuus vihapuheelle (Precision):** **0.96**. Kun malli väittää viestiä vihapuheeksi, se osuu melkein aina oikeaan. Vääriä hälytyksiä tulee tosi vähän.
+* **Saanti vihapuheelle (Recall):** **0.61**. Malli löytää noin 61 % kaikesta vihapuheesta. Osa vihapuheesta jää siis huomaamatta luokkien epätasapainon takia.
