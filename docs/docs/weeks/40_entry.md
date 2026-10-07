@@ -41,3 +41,16 @@ Tulokset:
 * **Accuracy:** 0.98 (noin 98 % ennusteista meni oikein).
 * **Sekaannusmatriisi:** TP: 71, FP: 2, FN: 0, TN: 27. Malli teki vain kaksi virhettä sadasta tapauksesta.
 * Tärkein tekijä oli nopeus. Jos vaadittu nopeus oli yli 19.6 km/h, puu valitsi aina auton.
+## 3. Satunnaismetsä alusta alkaen (Random Forest from Scratch)
+
+Kolmannessa tehtävässä (`330_metsa_from_scratch.py`) rakensin satunnaismetsän useammasta päätöspuusta.
+
+Metsässä oli mukana 5 puuta (`num_trees=5`). Jokainen puu sai opetusta varten oman satunnaisen otoksen aineistosta. Lopullinen ennuste tehtiin äänestyksellä, jossa enemmistö voittaa.
+
+![Satunnaismetsän testitulokset](../images/forest_scratch_results.png)
+
+Tulokset:
+* **Accuracy:** 0.99 (noin 99 % meni oikein).
+* **Sekaannusmatriisi:** TP: 71, FP: 1, FN: 0, TN: 28.
+* Yksittäinen puu teki aiemmin kaksi virhettä. Viiden puun metsä teki enää vain yhden virheen sadasta testitapauksesta.
+* Puut olivat useimmiten samaa mieltä (`unanimous`). Jos puilla tuli erimielisyyksiä (`CONFLICTING`), enemmistö äänesti silti oikein.
