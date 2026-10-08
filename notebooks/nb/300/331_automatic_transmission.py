@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.22.0"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -80,7 +80,7 @@ def _():
     transmission_map = {
         "AUTOMATIC": 1,
         "MANUAL": 0,
-        "AUTOMATED_MANUAL": None,  # <- This is something you need to choose!
+        "AUTOMATED_MANUAL": 1,  # <- This is something you need to choose!
         "DIRECT_DRIVE": None,
         "UNKNOWN": None,
     }
@@ -434,7 +434,7 @@ def _(df):
     print()
 
     print(f"Number of features: {len(feature_cols)}")
-    return
+    return TARGET, categorical_features, feature_cols, numeric_features
 
 
 @app.cell(hide_code=True)
@@ -445,12 +445,28 @@ def _(mo):
     return
 
 
+@app.cell
+def _(TARGET, df, feature_cols):
+    X = df.select(feature_cols).to_pandas()
+    y = df.select(TARGET).to_pandas().values.ravel()
+    return X, y
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## Train Test Split
     """)
     return
+
+
+@app.cell
+def _(X, y):
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+    X_train.shape, X_test.shape
+    return X_test, X_train, y_test, y_train
 
 
 @app.cell(hide_code=True)
@@ -461,12 +477,50 @@ def _(mo):
     return
 
 
+@app.cell
+def _(categorical_features, numeric_features):
+    numeric_transformer = Pipeline(steps=[
+        ("imputer", SimpleImputer(strategy="median"))
+    ])
+
+    categorical_transformer = Pipeline(steps=[
+        ("imputer", SimpleImputer(strategy="constant", fill_value="missing")),
+        ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
+    ])
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("num", numeric_transformer, numeric_features),
+            ("cat", categorical_transformer, categorical_features),
+        ]
+    )
+    return (preprocessor,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     # Training
     """)
     return
+
+
+@app.cell
+def _(X_train, preprocessor, y_train):
+    # Одиночное дерево решений
+    tree_clf = Pipeline(steps=[
+        ("preprocessor", preprocessor),
+        ("classifier", DecisionTreeClassifier(max_depth=5, random_state=42))
+    ])
+    tree_clf.fit(X_train, y_train)
+
+    # Случайный лес
+    rf_clf = Pipeline(steps=[
+        ("preprocessor", preprocessor),
+        ("classifier", RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42, n_jobs=-1))
+    ])
+    rf_clf.fit(X_train, y_train)
+    return rf_clf, tree_clf
 
 
 @app.cell(hide_code=True)
@@ -477,11 +531,44 @@ def _(mo):
     return
 
 
+@app.cell
+def _(X_test, rf_clf, tree_clf, y_test):
+    y_pred_tree = tree_clf.predict(X_test)
+    y_pred_rf = rf_clf.predict(X_test)
+
+    print("=== Decision Tree ===")
+    print("Accuracy:", round(metrics.accuracy_score(y_test, y_pred_tree), 4))
+    print("F1-score:", round(metrics.f1_score(y_test, y_pred_tree), 4))
+    print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred_tree))
+
+    print("\n=== Random Forest ===")
+    print("Accuracy:", round(metrics.accuracy_score(y_test, y_pred_rf), 4))
+    print("F1-score:", round(metrics.f1_score(y_test, y_pred_rf), 4))
+    print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred_rf))
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     # Inspect Feature Importance
     """)
+    return
+
+
+@app.cell
+def _(rf_clf):
+    # Извлекаем названия закодированных признаков и их важность из Random Forest
+    feature_names = rf_clf.named_steps["preprocessor"].get_feature_names_out()
+    importances = rf_clf.named_steps["classifier"].feature_importances_
+
+    # Сортируем топ-10 самых важных признаков
+    top_indices = importances.argsort()[-10:][::-1]
+
+    print("Top 10 Most Important Features:")
+    for idx in top_indices:
+        clean_name = feature_names[idx].replace("cat__", "").replace("num__", "")
+        print(f"- {clean_name}: {importances[idx]:.4f}")
     return
 
 

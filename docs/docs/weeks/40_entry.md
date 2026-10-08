@@ -54,3 +54,32 @@ Tulokset:
 * **Sekaannusmatriisi:** TP: 71, FP: 1, FN: 0, TN: 28.
 * Yksittäinen puu teki aiemmin kaksi virhettä. Viiden puun metsä teki enää vain yhden virheen sadasta testitapauksesta.
 * Puut olivat useimmiten samaa mieltä (`unanimous`). Jos puilla tuli erimielisyyksiä (`CONFLICTING`), enemmistö äänesti silti oikein.
+## 4. Sovellus: Automaattivaihteiden ennustaminen
+
+Tässä tehtävässä (`331_automatic_transmission.py`) ennustin auton ominaisuuksien avulla, onko autossa automaatti- vai manuaalivaihteisto. Käytin mallina Scikit-learnin päätöspuuta ja satunnaismetsää.
+
+### Esikäsittely ja opetus
+* Aineistossa oli yhteensä 11 827 riviä.
+* Käsittelin puuttuvat numeeriset arvot mediaanilla. Kategoriset muuttujat enkoodasin One-Hot-menetelmällä (`Pipeline`).
+* Jaoin datan ositetusti: 80 % meni opetusjoukkoon ja 20 % testijoukkoon.
+
+### Tulokset
+
+| Malli | Tarkkuus (Accuracy) | F1-score |
+| :--- | :--- | :--- |
+| **Päätöspuu (Decision Tree)** | 0.8407 | 0.8950 |
+| **Satunnaismetsä (Random Forest)** | **0.8491** | **0.9081** |
+
+![Mallien vertailu](../images/40_auto_transmission_evaluate.png)
+
+Satunnaismetsä toimi paremmin kuin yksittäinen puu. Se teki selvästi vähemmän virheitä automaattivaihteiden tunnistamisessa (FN: 16 vs. Puun 173).
+
+### Tärkeimmät piirteet (Feature Importance)
+
+![Tärkeimmät piirteet](../images/40_auto_transmission_feature_importance.png)
+
+Ennusteen kannalta tärkeimmät piirteet olivat:
+1. **MSRP (hinta)** – Kalliit autot ovat melkein aina automaatteja.
+2. **Year (vuosimalli)** – Uudemmissa autoissa automaattivaihteisto on selvästi yleisempi.
+3. **Number of Doors** ja **Vehicle Size** – Pienet autot ovat useammin manuaaleja.
+4. **Engine HP (teho)** – Tehokkaammissa autoissa on useammin automaatti.

@@ -426,6 +426,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#3-satunnaismetsa-alusta-alkaen-random-forest-from-scratch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Satunnaismetsä alusta alkaen (Random Forest from Scratch)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -534,6 +545,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#3-satunnaismetsa-alusta-alkaen-random-forest-from-scratch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Satunnaismetsä alusta alkaen (Random Forest from Scratch)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -578,6 +600,15 @@
 * <strong>Accuracy:</strong> 0.98 (noin 98 % ennusteista meni oikein).
 * <strong>Sekaannusmatriisi:</strong> TP: 71, FP: 2, FN: 0, TN: 27. Malli teki vain kaksi virhettä sadasta tapauksesta.
 * Tärkein tekijä oli nopeus. Jos vaadittu nopeus oli yli 19.6 km/h, puu valitsi aina auton.</p>
+<h2 id="3-satunnaismetsa-alusta-alkaen-random-forest-from-scratch">3. Satunnaismetsä alusta alkaen (Random Forest from Scratch)</h2>
+<p>Kolmannessa tehtävässä (<code>330_metsa_from_scratch.py</code>) rakensin satunnaismetsän useammasta päätöspuusta.</p>
+<p>Metsässä oli mukana 5 puuta (<code>num_trees=5</code>). Jokainen puu sai opetusta varten oman satunnaisen otoksen aineistosta. Lopullinen ennuste tehtiin äänestyksellä, jossa enemmistö voittaa.</p>
+<p><img alt="Satunnaismetsän testitulokset" src="../../images/forest_scratch_results.png" /></p>
+<p>Tulokset:
+* <strong>Accuracy:</strong> 0.99 (noin 99 % meni oikein).
+* <strong>Sekaannusmatriisi:</strong> TP: 71, FP: 1, FN: 0, TN: 28.
+* Yksittäinen puu teki aiemmin kaksi virhettä. Viiden puun metsä teki enää vain yhden virheen sadasta testitapauksesta.
+* Puut olivat useimmiten samaa mieltä (<code>unanimous</code>). Jos puilla tuli erimielisyyksiä (<code>CONFLICTING</code>), enemmistö äänesti silti oikein.</p>
 
 
 
