@@ -498,6 +498,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#4-k-nn-ja-mallivertailu-automaattivaihteet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. k-NN ja mallivertailu (Automaattivaihteet)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. k-NN ja mallivertailu (Automaattivaihteet)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#k-nn-from-scratch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        k-NN from Scratch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automaattivaihteiden-luokittelu-ja-pcan-vaikutus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automaattivaihteiden luokittelu ja PCA:n vaikutus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onko-pca-hopealuoti-k-nnlle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Onko PCA hopealuoti k-NN:lle?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -650,6 +700,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#4-k-nn-ja-mallivertailu-automaattivaihteet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. k-NN ja mallivertailu (Automaattivaihteet)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. k-NN ja mallivertailu (Automaattivaihteet)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#k-nn-from-scratch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        k-NN from Scratch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automaattivaihteiden-luokittelu-ja-pcan-vaikutus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automaattivaihteiden luokittelu ja PCA:n vaikutus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onko-pca-hopealuoti-k-nnlle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Onko PCA hopealuoti k-NN:lle?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -695,6 +795,46 @@
 - <strong>t-SNE:</strong> Jakaa numerot (0–9) tosi selkeiksi omiksi saarekkeiksi ilman, että malli tiesi numeroita etukäteen.</p>
 <p><img alt="MNIST PCA" src="../../images/w41_mnist_pca.png" /></p>
 <p><img alt="MNIST t-SNE" src="../../images/w41_mnist_tsne.png" /></p>
+<h2 id="4-k-nn-ja-mallivertailu-automaattivaihteet">4. k-NN ja mallivertailu (Automaattivaihteet)</h2>
+<h3 id="k-nn-from-scratch">k-NN from Scratch</h3>
+<p>Toteutin $k$-NN-algoritmin alusta alkaen ilman valmiita koneoppimiskirjastoja. Pisteiden välinen etäisyys laskettiin euklidisella etäisyydellä. Luokitus tehtiin suoraan enemmistöpäätöksellä lähimpien naapureiden joukosta.</p>
+<p><img alt="k-NN from scratch" src="../../images/w41_knn_from_scratch.png" /></p>
+<hr />
+<h3 id="automaattivaihteiden-luokittelu-ja-pcan-vaikutus">Automaattivaihteiden luokittelu ja PCA:n vaikutus</h3>
+<p>Vertailin tehtävässä kolmea eri $k$-NN-mallivarianttia:
+- <strong>Malli A (Simple):</strong> Numeeriset ja yksinkertaiset kategoriaominaisuudet ilman automerkkiä ja -mallia.
+- <strong>Malli B (Full OHE):</strong> Kaikki ominaisuudet mukana, myös One-Hot-enkoodatut automerkki ja -malli.
+- <strong>Malli C (Full OHE + PCA):</strong> Kaikki ominaisuudet, joiden dimensioita pienennettiin PCA-menetelmällä ennen luokitusta (20 komponenttia).</p>
+<p><img alt="Mallien vertailu" src="../../images/w41_auto_transmission_knn.png" /></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Malli</th>
+<th style="text-align: left;">Accuracy</th>
+<th style="text-align: left;">F1-score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Model A (Simple)</strong></td>
+<td style="text-align: left;">0.9157</td>
+<td style="text-align: left;">0.9434</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Model B (Full OHE)</strong></td>
+<td style="text-align: left;">0.9179</td>
+<td style="text-align: left;">0.9450</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Model C (Full OHE + PCA)</strong></td>
+<td style="text-align: left;">0.9108</td>
+<td style="text-align: left;">0.9398</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="onko-pca-hopealuoti-k-nnlle">Onko PCA hopealuoti k-NN:lle?</h3>
+<p>Ei ole. Vaikka PCA nopeuttaa laskentaa ja tiivistää satoja One-Hot-koodattuja sarakkeita harvempaan tilaan, se samalla hävittää osan tarkasta informaatiosta. Tämän takia mallin tarkkuus ja F1-tulos laskivat hieman verrattuna suoraan One-Hot-koodattuun malliin B. Lisäksi k-NN-mallit eivät yltäneet Random Forestin huipputasoon (~0.96–0.97).</p>
 
 
 
