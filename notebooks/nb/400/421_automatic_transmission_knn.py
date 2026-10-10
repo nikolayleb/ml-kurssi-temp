@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.22.5"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -175,7 +175,14 @@ def _(df):
     print(
         f"Feature count — full: {len(feature_cols_full)},  simple: {len(feature_cols_simple)}"
     )
-    return TARGET, feature_cols_full, feature_cols_simple
+    return (
+        TARGET,
+        categorical_features_full,
+        categorical_features_simple,
+        feature_cols_full,
+        feature_cols_simple,
+        numeric_features,
+    )
 
 
 @app.cell(hide_code=True)
@@ -224,7 +231,14 @@ def _(X_full, X_simple, y):
 
     print("Test target distribution:")
     print(y_test.value_counts(normalize=True).sort("is_automatic"))
-    return
+    return (
+        X_full_test,
+        X_full_train,
+        X_simple_test,
+        X_simple_train,
+        y_test,
+        y_train,
+    )
 
 
 @app.cell(hide_code=True)
@@ -253,6 +267,54 @@ def _(mo):
     return
 
 
+@app.cell
+def _(
+    X_simple_test,
+    X_simple_train,
+    categorical_features_simple,
+    numeric_features,
+    y_test,
+    y_train,
+):
+    # 1. Предобработка: числа масштабируем, простые категории кодируем
+    preprocessor_a = ColumnTransformer(
+        transformers=[
+            (
+                "num",
+                Pipeline(
+                    [
+                        ("imputer", SimpleImputer(strategy="median")),
+                        ("scaler", StandardScaler()),
+                    ]
+                ),
+                numeric_features,
+            ),
+            (
+                "cat",
+                OneHotEncoder(handle_unknown="ignore", sparse_output=False),
+                categorical_features_simple,
+            ),
+        ]
+    )
+
+    # 2. Пайплайн с k-NN
+    model_a = Pipeline(
+        [
+            ("prep", preprocessor_a),
+            ("knn", KNeighborsClassifier(n_neighbors=5)),
+        ]
+    )
+
+    # 3. Обучение и предсказание
+    model_a.fit(X_simple_train.to_pandas(), y_train.to_numpy())
+    y_pred_a = model_a.predict(X_simple_test.to_pandas())
+
+    acc_a = metrics.accuracy_score(y_test.to_numpy(), y_pred_a)
+    f1_a = metrics.f1_score(y_test.to_numpy(), y_pred_a)
+    print(f"Model A: Accuracy = {acc_a:.4f}, F1 = {f1_a:.4f}")
+    return acc_a, f1_a
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -262,6 +324,52 @@ def _(mo):
     This produces hundreds of binary columns.
     """)
     return
+
+
+@app.cell
+def _(
+    X_full_test,
+    X_full_train,
+    categorical_features_full,
+    numeric_features,
+    y_test,
+    y_train,
+):
+    # Model B: Все признаки, включая Make и Model (сотни бинарных признаков после OHE)
+    preprocessor_b = ColumnTransformer(
+        transformers=[
+            (
+                "num",
+                Pipeline(
+                    [
+                        ("imputer", SimpleImputer(strategy="median")),
+                        ("scaler", StandardScaler()),
+                    ]
+                ),
+                numeric_features,
+            ),
+            (
+                "cat",
+                OneHotEncoder(handle_unknown="ignore", sparse_output=False),
+                categorical_features_full,
+            ),
+        ]
+    )
+
+    model_b = Pipeline(
+        [
+            ("prep", preprocessor_b),
+            ("knn", KNeighborsClassifier(n_neighbors=5)),
+        ]
+    )
+
+    model_b.fit(X_full_train.to_pandas(), y_train.to_numpy())
+    y_pred_b = model_b.predict(X_full_test.to_pandas())
+
+    acc_b = metrics.accuracy_score(y_test.to_numpy(), y_pred_b)
+    f1_b = metrics.f1_score(y_test.to_numpy(), y_pred_b)
+    print(f"Model B: Accuracy = {acc_b:.4f}, F1 = {f1_b:.4f}")
+    return acc_b, f1_b, preprocessor_b
 
 
 @app.cell(hide_code=True)
@@ -275,11 +383,50 @@ def _(mo):
     return
 
 
+@app.cell
+def _(X_full_test, X_full_train, preprocessor_b, y_test, y_train):
+    # Model C: Все признаки + сжатие через PCA до 20 компонент
+    model_c = Pipeline(
+        [
+            ("prep", preprocessor_b),
+            ("pca", PCA(n_components=20)),
+            ("knn", KNeighborsClassifier(n_neighbors=5)),
+        ]
+    )
+
+    model_c.fit(X_full_train.to_pandas(), y_train.to_numpy())
+    y_pred_c = model_c.predict(X_full_test.to_pandas())
+
+    acc_c = metrics.accuracy_score(y_test.to_numpy(), y_pred_c)
+    f1_c = metrics.f1_score(y_test.to_numpy(), y_pred_c)
+    print(f"Model C: Accuracy = {acc_c:.4f}, F1 = {f1_c:.4f}")
+    return acc_c, f1_c
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     # Model Comparison
     """)
+    return
+
+
+@app.cell
+def _(acc_a, acc_b, acc_c, f1_a, f1_b, f1_c):
+    import pandas as pd
+
+    comparison_df = pd.DataFrame(
+        {
+            "Malli": [
+                "Model A (Simple)",
+                "Model B (Full OHE)",
+                "Model C (Full OHE + PCA)",
+            ],
+            "Accuracy": [acc_a, acc_b, acc_c],
+            "F1-score": [f1_a, f1_b, f1_c],
+        }
+    )
+    comparison_df
     return
 
 
