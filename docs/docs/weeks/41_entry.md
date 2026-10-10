@@ -1,66 +1,44 @@
-# Viikko 41: Piirteiden skaalaus, dimensiovähennys ja k-NN
+# Viikko 41: Dimensiovähennys (PCA ja t-SNE)
 
-Tällä viikolla perehdyin kolmeen keskeiseen teemaan: piirteiden skaalaukseen, dimensiovähennykseen (PCA, MDS, t-SNE) sekä k-NN-luokittelijan toteutukseen alusta alkaen.
+Tällä viikolla kokeilin dimensiovähennystä kahdella eri menetelmällä: PCA:lla ja t-SNE:llä. Testasin niitä ensin Drawdata-työkalulla (2D-pisteet) ja sen jälkeen MNIST-numerodatalla.
 
-## Viikko 41: Dimensiovähennys (PCA ja t-SNE)
+## 1. Menetelmien perusidea
 
-Tällä viikolla perehdyin moniulotteisen datan tiivistämiseen ja visualisointiin kahdella keskeisellä menetelmällä: lineaarisella pääkomponenttianalyysillä (PCA) sekä epälineaarisella t-SNE-menetelmällä. Kokeilin menetelmien toimintaa ensin synteettisellä 2D-datalla (`Drawdata`-kirjaston avulla) ja sen jälkeen korkeaulotteisella MNIST-numerodatalla.
+- **PCA:** Lineaarinen menetelmä. Se etsii suunnat, joissa data vaihtelee eniten, ja kääntää akselit niiden mukaan. Se säilyttää datan yleisen muodon, mutta ei toimi hyvin, jos data on mutkikasta tai käyrää.
+- **t-SNE:** Epälineaarinen menetelmä. Se katsoo vain sitä, mitkä pisteet ovat lähellä toisiaan (naapureita). Se löytää erilliset ryhmät ja klusterit tosi hyvin.
 
----
+## 2. Kokeet Drawdata-pisteillä
 
-## 1. Menetelmien perusperiaatteet
+Piirsin eri muotoja ja katsoin, miten menetelmät muuttavat niitä:
 
-- **PCA (Principal Component Analysis):** Lineaarinen dimensiovähennysmenetelmä, joka projisoi datan uusille ortogonaalisille akseleille (pääkomponenteille) siten, että datan varianssi maksimoituu. PCA säilyttää datan globaalin lineaarisen geometrian ja kokonaishajonnan, mutta se ei kykene mallintamaan epälineaarisia rakenteita.
-- **t-SNE (t-Distributed Stochastic Neighbor Embedding):** Epälineaarinen menetelmä, joka mallintaa datapisteiden naapuruussuhteita todennäköisyyksinä sekä korkea- että matalaulotteisessa avaruudessa. Menetelmä soveltuu erinomaisesti paikallisten ryhmien, monimuotoisten klustereiden ja datan sisäisen topologian esiin tuomiseen.
+### Risti (X-muoto)
+PCA keskittää pisteet ja kääntää ne, mutta ristin keskellä eri luokat menevät päällekkäin. PCA on suora menetelmä, joten se ei osaa erottaa leikkaavia viivoja.
 
----
-
-## 2. Kokeet synteettisillä muodoilla (Drawdata)
-
-Interaktiivisella `ScatterWidget`-työkalulla generoitiin erilaisia geometrisia 2D-pistekuvioita menetelmien käyttäytymisen vertailemiseksi:
-
-### Risti / Leikkaavat viivat (X-muoto)
-PCA keskittää pistejoukon nollan ympärille ja kiertää koordinaatiston suurimman varianssin suuntaisesti. Koska menetelmä on täysin lineaarinen, ristin leikkauskohdassa eri luokkien pisteet sekoittuvat toisiinsa — PCA ei kykene erottelemaan toisiaan leikkaavia haaroja toisistaan matalammassa ulottuvuudessa.
-
-![X-muoto PCA](../images/w41_x_pca.png)
-
----
+![X PCA](../images/w41_x_pca.png)
 
 ### Rinnakkaiset viivat (II-muoto)
-Kokeessa piirrettiin kaksi erillistä pystysuoraa rinnakkaista viivaa eri luokille:
-- **PCA:** Kääntää koordinaatiston ja säilyttää viivojen välisen suhteellisen etäisyyden sekä suoraviivaisen geometrian.
-- **t-SNE:** Tiivistää kummankin viivan pisteet omiksi erillisiksi nauhoikseen, jolloin luokkien välinen raja säilyy erittäin selkeänä paikallisten etäisyyksien ansiosta.
+PCA kääntää viivat ja säilyttää niiden suoruuden ja välin. t-SNE taas tekee kummastakin viivasta oman tiiviin nauhan. Molemmat erottavat luokat hyvin.
 
-| PCA (II-muoto) | t-SNE (II-muoto) |
-| :---: | :---: |
-| ![II PCA](../images/w41_parallel_lines_pca.png) | ![II t-SNE](../images/w41_parallel_lines_tsne.png) |
+![II PCA](../images/w41_parallel_lines_pca.png)
 
----
+![II t-SNE](../images/w41_parallel_lines_tsne.png)
 
-### S-kirjain (Epälineaarinen käyrä)
-Tämä koe havainnollistaa selkeimmin t-SNE:n ja lineaaristen menetelmien välisen eron:
-- t-SNE "oikaisee" mutkittelevat S-käyrät lähes suoriksi säikeiksi, koska algoritmi optimoi pisteiden paikallista järjestystä ja naapuruutta eikä pakota dataa globaalisti suorille akseleille.
+### S-muoto (mutkitteleva viiva)
+Tässä näkyy iso ero: PCA pitää S-muodon ennallaan, mutta t-SNE vetää mutkittelevan nauhan suoraksi, koska se keskittyy vain vierekkäisiin pisteisiin.
 
-![S-muoto t-SNE](../images/w41_s_shape_tsne.png)
+![S t-SNE](../images/w41_s_shape_tsne.png)
 
----
+### Windows-logo (4 ryhmää)
+Kun pisteet ovat selkeästi omissa kulmissaan, molemmat menetelmät toimivat hyvin. t-SNE kerää ryhmät vielä tiiviimmiksi palloiksi.
 
-### Windows-logo (Neljä erillistä klusteria)
-Neljä toisistaan selkeästi erillään olevaa pisteklusteria säilyttävät muotonsa ja erottuvat luotettavasti molemmilla menetelmillä:
-- PCA säilyttää ryhmien globaalit keskinäiset suhteet.
-- t-SNE vetää klusterit vieläkin tiiviimmiksi ja toisistaan eristetyiksi saarekkeiksi.
+![Windows t-SNE](../images/w41_windows_clusters.png)
 
-![Windows-klusterit t-SNE](../images/w41_windows_clusters.png)
+## 3. MNIST-numerot (kuvadatan tiivistäminen)
 
----
+MNIST-kuvissa on 64 pikseliä (8x8), ja ne tiivistettiin kahteen ulottuvuuteen:
+- **PCA:** Numerot ryhmittyvät vähän, mutta monet numerot menevät sekaisin, koska 2 ulottuvuutta lineaarisesti ei riitä kuville.
+- **t-SNE:** Jakaa numerot (0–9) tosi selkeiksi omiksi saarekkeiksi ilman, että malli tiesi numeroita etukäteen.
 
-## 3. MNIST-numerot (64 ulottuvuudesta kahteen)
+![MNIST PCA](../images/w41_mnist_pca.png)
 
-Lopuksi menetelmiä testattiin korkeaulotteisella `load_digits`-kuva-aineistolla, jossa jokainen numero koostuu 64 pikselin harmaasävyarvosta ($8 \times 8$ -matriisi):
-
-- **PCA (64 → 2):** Ryhmittelee numeroita karkeasti yleisen pikselijakauman mukaan, mutta useiden numeroluokkien pisteet menevät huomattavan paljon päällekkäin lineaarisen projektion rajoitteiden vuoksi.
-- **t-SNE (64 → 2):** Jakaa numeroluokat (0–9) hämmästyttävän selkeiksi, toisistaan eristetyiksi saarekkeiksi täysin ilman ennakkotietoa todellisista luokkatiedoista projektiohetkellä.
-
-| MNIST PCA (64 → 2) | MNIST t-SNE (64 → 2) |
-| :---: | :---: |
-| ![MNIST PCA](../images/w41_mnist_pca.png) | ![MNIST t-SNE](../images/w41_mnist_tsne.png) |
+![MNIST t-SNE](../images/w41_mnist_tsne.png)
