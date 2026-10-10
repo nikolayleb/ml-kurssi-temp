@@ -437,6 +437,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#4-sovellus-automaattivaihteiden-ennustaminen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sovellus: Automaattivaihteiden ennustaminen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Sovellus: Automaattivaihteiden ennustaminen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#esikasittely-ja-opetus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Esikäsittely ja opetus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tulokset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tulokset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarkeimmat-piirteet-feature-importance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tärkeimmät piirteet (Feature Importance)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -556,6 +606,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#4-sovellus-automaattivaihteiden-ennustaminen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sovellus: Automaattivaihteiden ennustaminen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Sovellus: Automaattivaihteiden ennustaminen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#esikasittely-ja-opetus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Esikäsittely ja opetus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tulokset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tulokset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarkeimmat-piirteet-feature-importance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tärkeimmät piirteet (Feature Importance)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -609,6 +709,45 @@
 * <strong>Sekaannusmatriisi:</strong> TP: 71, FP: 1, FN: 0, TN: 28.
 * Yksittäinen puu teki aiemmin kaksi virhettä. Viiden puun metsä teki enää vain yhden virheen sadasta testitapauksesta.
 * Puut olivat useimmiten samaa mieltä (<code>unanimous</code>). Jos puilla tuli erimielisyyksiä (<code>CONFLICTING</code>), enemmistö äänesti silti oikein.</p>
+<h2 id="4-sovellus-automaattivaihteiden-ennustaminen">4. Sovellus: Automaattivaihteiden ennustaminen</h2>
+<p>Tässä tehtävässä (<code>331_automatic_transmission.py</code>) ennustin auton ominaisuuksien avulla, onko autossa automaatti- vai manuaalivaihteisto. Käytin mallina Scikit-learnin päätöspuuta ja satunnaismetsää.</p>
+<h3 id="esikasittely-ja-opetus">Esikäsittely ja opetus</h3>
+<ul>
+<li>Aineistossa oli yhteensä 11 827 riviä.</li>
+<li>Käsittelin puuttuvat numeeriset arvot mediaanilla. Kategoriset muuttujat enkoodasin One-Hot-menetelmällä (<code>Pipeline</code>).</li>
+<li>Jaoin datan ositetusti: 80 % meni opetusjoukkoon ja 20 % testijoukkoon.</li>
+</ul>
+<h3 id="tulokset">Tulokset</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Malli</th>
+<th style="text-align: left;">Tarkkuus (Accuracy)</th>
+<th style="text-align: left;">F1-score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Päätöspuu (Decision Tree)</strong></td>
+<td style="text-align: left;">0.8407</td>
+<td style="text-align: left;">0.8950</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Satunnaismetsä (Random Forest)</strong></td>
+<td style="text-align: left;"><strong>0.8491</strong></td>
+<td style="text-align: left;"><strong>0.9081</strong></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Mallien vertailu" src="../../images/40_auto_transmission_evaluate.png" /></p>
+<p>Satunnaismetsä toimi paremmin kuin yksittäinen puu. Se teki selvästi vähemmän virheitä automaattivaihteiden tunnistamisessa (FN: 16 vs. Puun 173).</p>
+<h3 id="tarkeimmat-piirteet-feature-importance">Tärkeimmät piirteet (Feature Importance)</h3>
+<p><img alt="Tärkeimmät piirteet" src="../../images/40_auto_transmission_feature_importance.png" /></p>
+<p>Ennusteen kannalta tärkeimmät piirteet olivat:
+1. <strong>MSRP (hinta)</strong> – Kalliit autot ovat melkein aina automaatteja.
+2. <strong>Year (vuosimalli)</strong> – Uudemmissa autoissa automaattivaihteisto on selvästi yleisempi.
+3. <strong>Number of Doors</strong> ja <strong>Vehicle Size</strong> – Pienet autot ovat useammin manuaaleja.
+4. <strong>Engine HP (teho)</strong> – Tehokkaammissa autoissa on useammin automaatti.</p>
 
 
 
