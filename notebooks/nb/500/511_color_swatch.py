@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.0"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -34,7 +34,7 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    img = cv2.imread("data/photos/510_task_kmeans_fruit.jpg")
+    img = cv2.imread("../../data/photos/510_task_kmeans_fruit.jpg")
 
     # OpenCV default to BGR channel order, Pyplot and Marimo assume RGB
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -178,6 +178,70 @@ def _(mo):
 
     Hey you, the student! You are expected to continue from here. Train 3 k-Means models with HSV, RGB and LAB modes.
     """)
+    return
+
+
+@app.cell
+def _(mo):
+    # 1. Слайдер для выбора k (количества цветов)
+    k_colors_slider = mo.ui.slider(2, 10, value=4, step=1, label="k väriä")
+    k_colors_slider
+    return (k_colors_slider,)
+
+
+@app.cell
+def _(X_hhsv, X_lab, X_rgb, hhsv_to_hsv, k_colors_slider, mo):
+    k = k_colors_slider.value
+
+    # 1. Обучение трех моделей KMeans
+    kmeans_rgb = KMeans(n_clusters=k, random_state=42, n_init=10).fit(X_rgb)
+    kmeans_hsv = KMeans(n_clusters=k, random_state=42, n_init=10).fit(X_hhsv)
+    kmeans_lab = KMeans(n_clusters=k, random_state=42, n_init=10).fit(X_lab)
+
+    def build_swatch(labels, centers_rgb, width=400, height=35):
+        # Считаем доли пикселей в каждом кластере
+        counts = np.bincount(labels, minlength=len(centers_rgb))
+        order = np.argsort(-counts)  # сортируем от самого частого цвета к редкому
+
+        # Строим горизонтальную полосу пропорциональной ширины
+        swatch = np.zeros((height, width, 3), dtype=np.uint8)
+        curr_x = 0
+        total = len(labels)
+        for idx in order:
+            w = int(round((counts[idx] / total) * width))
+            color = np.clip(centers_rgb[idx], 0, 255).astype(np.uint8)
+            swatch[:, curr_x : curr_x + w] = color
+            curr_x += w
+        if curr_x < width:
+            swatch[:, curr_x:] = np.clip(centers_rgb[order[-1]], 0, 255).astype(np.uint8)
+        return swatch
+
+    # Преобразуем найденные центроиды обратно в правильный RGB для отрисовки:
+    # RGB центроиды:
+    centers_rgb_from_rgb = kmeans_rgb.cluster_centers_
+
+    # HSV центроиды (переводим из 4D hhsv обратно в hsv, затем через cv2 в rgb):
+    hsv_recovered = hhsv_to_hsv(kmeans_hsv.cluster_centers_)
+    hsv_for_cv = np.clip(hsv_recovered, [0, 0, 0], [179, 255, 255]).astype(np.uint8).reshape(1, -1, 3)
+    centers_rgb_from_hsv = cv2.cvtColor(hsv_for_cv, cv2.COLOR_HSV2RGB).reshape(-1, 3)
+
+    # LAB центроиды (переводим через cv2 из lab в rgb):
+    lab_for_cv = np.clip(kmeans_lab.cluster_centers_, 0, 255).astype(np.uint8).reshape(1, -1, 3)
+    centers_rgb_from_lab = cv2.cvtColor(lab_for_cv, cv2.COLOR_LAB2RGB).reshape(-1, 3)
+
+    # Формируем палитры
+    swatch_rgb = build_swatch(kmeans_rgb.labels_, centers_rgb_from_rgb)
+    swatch_hsv = build_swatch(kmeans_hsv.labels_, centers_rgb_from_hsv)
+    swatch_lab = build_swatch(kmeans_lab.labels_, centers_rgb_from_lab)
+
+    mo.vstack([
+        mo.md("### RGB Värikartta"),
+        mo.image(swatch_rgb),
+        mo.md("### HSV Värikartta"),
+        mo.image(swatch_hsv),
+        mo.md("### LAB Värikartta"),
+        mo.image(swatch_lab),
+    ])
     return
 
 
