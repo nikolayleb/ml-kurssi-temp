@@ -5,9 +5,9 @@ Tällä viikolla tutustuin kahteen aiheeseen: miten teksti muutetaan numeroiksi 
 ## 1. Tekstin muuttaminen numeroiksi ja TF-IDF
 Tietokone ei ymmärrä sanoja suoraan. Siksi teksti pitää muuttaa numeroiksi. Jos lasketaan vain sanojen määrä (TF), tavalliset sanat saavat liikaa painoa. Tämän takia käytetään IDF-arvoa. Se pienentää sellaisten sanojen painoarvoa, jotka toistuvat melkein jokaisessa tekstissä.
 
-Tehtävässä lisäsin sanan `kurssi` kaikkiin 10 dokumenttiin ($DF = 10, N = 10$). Kaava laskee sen näin:
+Tehtävässä lisäsin sanan `kurssi` kaikkiin 10 dokumenttiin (DF = 10, N = 10). Kaava laskee sen näin:
 
-$$\log(10 / 10) = \log(1) = 0.0$$
+log(10 / 10) = log(1) = 0.0
 
 Koska tulos on 0.0, sanan paino nollautui kokonaan. Tämä näyttää käytännössä sen, että jos sana löytyy joka paikasta, se ei auta mallia erottelemaan tekstejä toisistaan.
 
