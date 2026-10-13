@@ -777,8 +777,8 @@
 <h2 id="talla-viikolla-tutustuin-kahteen-aiheeseen-miten-teksti-muutetaan-numeroiksi-tf-idf-ja-miten-bayesin-kaava-toimii-kaytannossa-kun-aineistossa-on-useita-ehtoja">Tällä viikolla tutustuin kahteen aiheeseen: miten teksti muutetaan numeroiksi (TF-IDF) ja miten Bayesin kaava toimii käytännössä, kun aineistossa on useita ehtoja.</h2>
 <h2 id="1-tekstin-muuttaminen-numeroiksi-ja-tf-idf">1. Tekstin muuttaminen numeroiksi ja TF-IDF</h2>
 <p>Tietokone ei ymmärrä sanoja suoraan. Siksi teksti pitää muuttaa numeroiksi. Jos lasketaan vain sanojen määrä (TF), tavalliset sanat saavat liikaa painoa. Tämän takia käytetään IDF-arvoa. Se pienentää sellaisten sanojen painoarvoa, jotka toistuvat melkein jokaisessa tekstissä.</p>
-<p>Tehtävässä lisäsin sanan <code>kurssi</code> kaikkiin 10 dokumenttiin ($DF = 10, N = 10$). Kaava laskee sen näin:</p>
-<p>$$\log(10 / 10) = \log(1) = 0.0$$</p>
+<p>Tehtävässä lisäsin sanan <code>kurssi</code> kaikkiin 10 dokumenttiin (DF = 10, N = 10). Kaava laskee sen näin:</p>
+<p>log(10 / 10) = log(1) = 0.0</p>
 <p>Koska tulos on 0.0, sanan paino nollautui kokonaan. Tämä näyttää käytännössä sen, että jos sana löytyy joka paikasta, se ei auta mallia erottelemaan tekstejä toisistaan.</p>
 <h2 id="_1"><img alt="TF-IDF kurssi 0" src="../../images/tfidf_kurssi.png" /></h2>
 <h2 id="2-tilastot-ja-bayes-suora-haku-vs-naive-bayes">2. Tilastot ja Bayes: Suora haku vs. Naive Bayes</h2>
