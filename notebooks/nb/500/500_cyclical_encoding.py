@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.0"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -117,7 +117,6 @@ def _(df_encoded):
     )
 
     chart
-
     return
 
 
@@ -145,6 +144,19 @@ def _(df_encoded):
 
     _chart = (points + labels).properties(height=350, width=350).configure_axis(grid=True)
     _chart
+    return
+
+
+@app.cell
+def _():
+    # Время 04:42 в минутах
+    minutes_total = 4 * 60 + 42
+    cycle_minutes = 24 * 60
+
+    sin_val = np.sin(2 * np.pi * minutes_total / cycle_minutes)
+    cos_val = np.cos(2 * np.pi * minutes_total / cycle_minutes)
+
+    print(f"04:42 -> sin: {sin_val:.4f}, cos: {cos_val:.4f}")
     return
 
 
