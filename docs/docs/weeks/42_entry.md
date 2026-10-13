@@ -22,7 +22,7 @@ Tällä tavalla 23:00 ja 00:00 pysyvät lähellä toisiaan myös matemaattisesti
 - Laajensin koodin myös minuuttitasolle (klo 04:42). Kun syklin pituus on $24 \times 60 = 1440$ minuuttia, aika 04:42 (282 min) saa ympyrällä arvot $\sin \approx 0{,}94$ ja $\cos \approx 0{,}33$.
 ## Tehtävä: k-Means from scratch
 
-Tällä viikolla tutustuin ohjaamattomaan oppimiseen ja k-Means-klusterointiin. Tein harjoituksen Marimo-muistiossa, jossa koodasin algoritmin toiminnan itse alusta alkaen ilman Scikit-learnin valmista mallia.
+Tällä viikolla tutustuin ohjaamattomaan oppimiseen ja k-Means-klusterointiin. Tutkin harjoituksessa k-Means-algoritmin toimintaperiaatetta Marimo-muistiossa, jossa algoritmin toiminta oli toteutettu alusta alkaen (from scratch) ilman Scikit-learnin valmista mallia.
 
 ### 1. Datan generointi ja klusterointi
 
