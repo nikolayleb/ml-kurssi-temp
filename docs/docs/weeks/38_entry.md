@@ -10,7 +10,7 @@ Tällä viikolla luin materiaalit tekoälyn perusteista. Tärkein juttu on se et
 ## 2. Kolme oppimistyyppiä
 
 Koneoppiminen jaetaan kolmeen osaan:
-1. **Ohjattu oppiminen (Supervised):** Meillä on $X$ (piirteet) ja tiedetään oikea vastaus $y$. Se on joko luokittelu (onko kissa vai koira) tai regressio (talon hinta numeroina).
+1. **Ohjattu oppiminen (Supervised):** Meillä on X (piirteet) ja tiedetään oikea vastaus y. Se on joko luokittelu (onko kissa vai koira) tai regressio (talon hinta numeroina).
 2. **Ohjaamaton oppiminen (Unsupervised):** Ei ole valmiita vastauksia. Etsitään vain ryhmiä datasta, kuten t-paitojen koot S, M, L klusteroinnilla tai etsitään poikkeamia palvelimen lämpötilasta.
 3. **Vahvistusoppiminen (Reinforcement):** Ei ole valmista datasettiä. Botti kokeilee itse ympäristössä ja saa pisteitä tai miinusta, kuten Pac-Man pelissä tai autopelissä.
 
