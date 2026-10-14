@@ -593,6 +593,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tehtava-hill-climbing-from-scratch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tehtävä: Hill Climbing from Scratch
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tehtävä: Hill Climbing from Scratch">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#esikasittely-ja-toteutus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Esikäsittely ja toteutus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tulokset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tulokset
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -784,6 +823,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tehtava-hill-climbing-from-scratch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tehtävä: Hill Climbing from Scratch
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tehtävä: Hill Climbing from Scratch">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#esikasittely-ja-toteutus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Esikäsittely ja toteutus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tulokset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tulokset
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -858,6 +936,23 @@
 <h3 id="tarkeimmat-piirteet-kertoimet">Tärkeimmät piirteet (Kertoimet)</h3>
 <p><img alt="Piirteiden kertoimet" src="../../images/car_price_coefficients.png" /></p>
 <p>Eniten hintaa nostavat harvinaiset luksus- ja urheiluautot (kuten <code>Reventon</code>, <code>Landaulet</code> ja <code>Bugatti Veyron</code>). Näiden mallien kertoimet tuovat perushintaan heti satoja tuhansia tai jopa yli miljoonan dollarin lisän.</p>
+<h2 id="tehtava-hill-climbing-from-scratch">Tehtävä: Hill Climbing from Scratch</h2>
+<p>Tässä tehtävässä (<code>620_hill_climb_from_scratch.py</code>) optimoin lineaarisen mallin painoja Hill Climbing -algoritmilla ilman valmista analyyttistä kaavaa. Mallilla ennustettiin sairaslomapäiviä käärmeen pituuden ja lämpötilan perusteella.</p>
+<h3 id="esikasittely-ja-toteutus">Esikäsittely ja toteutus</h3>
+<ul>
+<li><strong>Standardointi:</strong> Skaalasin piirteet <code>StandardScaler</code> -työkalulla, jotta satunnaiset askeleet toimivat eri mittakaavan muuttujille tasapainoisesti.</li>
+<li><strong>Optimointi:</strong> Arvoin painoille aluksi satunnaiset luvut. Lähtötilanteessa virhe oli todella suuri (MSE &gt; 20 000). Jokaisella kierroksella lisäsin painoihin satunnaisluvun väliltä [-1.0, 1.0]. Uusi arvo hyväksyttiin vain silloin, kun virhe pieneni.</li>
+</ul>
+<h3 id="tulokset">Tulokset</h3>
+<p><img alt="Hill Climbing virheen kehitys" src="../../images/hill_climb_progress.png" /></p>
+<p>Virhe laski erittäin nopeasti ensimmäisten 500 kierroksen aikana. Tämän jälkeen lasku hidastui, ja minimi löytyi noin 600–800 iteraation kohdalla.</p>
+<p><img alt="Hill Climbing mittarit" src="../../images/hill_climb_metrics.png" /></p>
+<ul>
+<li><strong>MSE:</strong> 109.54</li>
+<li><strong>RMSE:</strong> 10.47 päivää</li>
+</ul>
+<p><img alt="Ennusteet vs todelliset arvot" src="../../images/hill_climb_predictions.png" /></p>
+<p>Kuten kuvaajasta näkyy, ennusteet asettuvat tiiviisti suoralle ja pysyvät ±RMSE-virherajojen sisällä. Tehtävä havainnollisti hyvin optimoinnin perusidean. Menetelmässä on kuitenkin paljon satunnaisuutta ja arpapeliä, joten seuraavaksi siirrytään suoraviivaisempaan <strong>Gradient Descent</strong> -algoritmiin.</p>
 
 
 
