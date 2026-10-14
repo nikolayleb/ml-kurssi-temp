@@ -86,3 +86,44 @@ Polynomiset piirteet paransivat tulosta hieman. Virheet pienenivät ja R² nousi
 ![Piirteiden kertoimet](../images/car_price_coefficients.png)
 
 Eniten hintaa nostavat harvinaiset luksus- ja urheiluautot (kuten `Reventon`, `Landaulet` ja `Bugatti Veyron`). Näiden mallien kertoimet tuovat perushintaan heti satoja tuhansia tai jopa yli miljoonan dollarin lisän.
+## Tehtävä: Hill Climbing from Scratch
+
+Tässä tehtävässä (`620_hill_climb_from_scratch.py`) optimoin lineaarisen mallin painoja Hill Climbing -algoritmilla ilman valmista analyyttistä kaavaa. Mallilla ennustettiin sairaslomapäiviä käärmeen pituuden ja lämpötilan perusteella.
+
+### Esikäsittely ja toteutus
+
+- **Standardointi:** Skaalasin piirteet `StandardScaler` -työkalulla, jotta satunnaiset askeleet toimivat eri mittakaavan muuttujille tasapainoisesti.
+- **Optimointi:** Arvoin painoille aluksi satunnaiset luvut. Lähtötilanteessa virhe oli todella suuri (MSE > 20 000). Jokaisella kierroksella lisäsin painoihin satunnaisluvun väliltä [-1.0, 1.0]. Uusi arvo hyväksyttiin vain silloin, kun virhe pieneni.
+
+### Tulokset
+
+![Hill Climbing virheen kehitys](../images/hill_climb_progress.png)
+
+Virhe laski erittäin nopeasti ensimmäisten 500 kierroksen aikana. Tämän jälkeen lasku hidastui, ja minimi löytyi noin 600–800 iteraation kohdalla.
+
+![Hill Climbing mittarit](../images/hill_climb_metrics.png)
+
+- **MSE:** 109.54
+- **RMSE:** 10.47 päivää
+
+![Ennusteet vs todelliset arvot](../images/hill_climb_predictions.png)
+
+Kuten kuvaajasta näkyy, ennusteet asettuvat tiiviisti suoralle ja pysyvät ±RMSE-virherajojen sisällä. Tehtävä havainnollisti hyvin optimoinnin perusidean. Menetelmässä on kuitenkin paljon satunnaisuutta ja arpapeliä, joten seuraavaksi siirrytään suoraviivaisempaan **Gradient Descent** -algoritmiin.
+
+## Tehtävä: Mini-batch gradienttilaskeutuminen
+
+Tässä tehtävässä laajensin satunnaisen gradienttilaskeutumisen (SGD) koodia toteuttamalla mini-batch-gradienttilaskeutumisen (`minibatch_gd`). Lopuksi vertailin näiden kahden menetelmän eroja ja oppimisen vakautta.
+
+### Toteutus ja havainnot
+
+1. **Käyttöliittymä ja parametrit:**
+   - Tein erillisen liukuvalitsimen (`batch_slider`), jolla eräkokoa (*batch size*) voi säätää välillä 2–32.
+   - Algoritmi sekoittaa datan satunnaisesti jokaisella epookilla, jakaa sen pienempiin osajoukkoihin (*mini-batch*) ja laskee virheen gradientin vektoroidusti kullekin erälle.
+
+2. **SGD:n ja Mini-batchin vertailu:**
+   - **SGD (eräkoko = 1):** Mallin painot päivitetään jokaisen yksittäisen datapisteen jälkeen. Koska yksittäisissä pisteissä on satunnaista kohinaa, oppimispolku heilahtelee ja optimointi on epävakaampaa.
+   - **Mini-batch (esim. eräkoko = 8):** Malli laskee keskimääräisen gradientin pienen pistejoukon yli. Tämä vaimentaa yksittäisten poikkeavien havaintojen vaikutusta, jolloin MSE-virhe laskee tasaisemmin kohti minimiä.
+
+![SGD vs Mini-batch -oppimisen edistyminen](../images/minibatch_progress.png)
+
+*Kuva: Koulutuksen edistyminen (MSE) epookkien funktiona puhtaalla SGD:llä ja mini-batch-menetelmällä.*

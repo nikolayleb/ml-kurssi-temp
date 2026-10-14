@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.1"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -182,7 +182,7 @@ def _(mo):
 
 
 @app.cell
-def _(X_std, epochs_slider, initial_w, lr_radio, mse, y_std):
+def _(X_std, batch_slider, epochs_slider, initial_w, lr_radio, mse, y_std):
     def _sgd(X, y, n_epochs, learning_rate, clip_norm=5.0) -> SGDResult:
         rng = np.random.default_rng(42)
         w = initial_w.copy()
@@ -219,9 +219,44 @@ def _(X_std, epochs_slider, initial_w, lr_radio, mse, y_std):
 
         final_y_hat = predict(X, w)
         return SGDResult(w, final_y_hat, epoch_history)
+    def minibatch_gd(X, y, n_epochs, learning_rate, batch_size=8, clip_norm=5.0) -> SGDResult:
+        rng = np.random.default_rng(42)
+        w = initial_w.copy()
+        n = len(y)
+        epoch_history = []
 
-    result = _sgd(X_std, y_std, epochs_slider.value, lr_radio.value)
-    return (result,)
+        _bias = np.ones((X.shape[0], 1))
+        X_bias = np.concatenate((_bias, X), axis=1)
+
+        for epoch in range(n_epochs):
+            indices = rng.permutation(n)
+            for start in range(0, n, batch_size):
+                batch_idx = indices[start : start + batch_size]
+                X_batch = X_bias[batch_idx]
+                y_batch = y[batch_idx]
+
+                y_hat_batch = X_batch @ w
+                residuals = y_hat_batch - y_batch
+                gradient = (2 / len(batch_idx)) * (X_batch.T @ residuals)
+
+                grad_norm = np.linalg.norm(gradient)
+                if grad_norm > clip_norm:
+                    gradient = gradient * (clip_norm / grad_norm)
+
+                w = w - learning_rate * gradient
+
+            _y_hat_all = X_bias @ w
+            _epoch_mse = mse(y - _y_hat_all)
+            epoch_history.append(Epoch(epoch, _epoch_mse))
+
+        final_y_hat = predict(X, w)
+        return SGDResult(w, final_y_hat, epoch_history)
+
+
+    result_sgd = _sgd(X_std, y_std, epochs_slider.value, lr_radio.value)
+    result_mb = minibatch_gd(X_std, y_std, epochs_slider.value, lr_radio.value, batch_size=batch_slider.value)
+    result = result_mb
+    return result, result_mb, result_sgd
 
 
 @app.cell(hide_code=True)
@@ -243,17 +278,25 @@ def _(mo):
         value=100,
         label="Epochs",
     )
+    batch_slider = mo.ui.slider(
+        start=2,
+        stop=32,
+        step=2,
+        value=8,
+        label="Batch size",
+    )
     _options = {"0.0001": 1e-4, "0.001": 1e-3, "0.01": 1e-2, "0.1": 0.1, "1.0": 1.0}
     lr_radio = mo.ui.radio(options=_options, value="0.0001", label="Learning rate (α)")
-    mo.hstack([epochs_slider, lr_radio], justify="start", gap=2)
-    return epochs_slider, lr_radio
+    mo.hstack([epochs_slider, batch_slider, lr_radio], justify="start", gap=2)
+    return batch_slider, epochs_slider, lr_radio
 
 
 @app.cell(hide_code=True)
-def _(result):
+def _(result_mb, result_sgd):
     _progress_df = pl.DataFrame({
-        "Epoch": [e.i for e in result.epochs],
-        "MSE": [e.MSE for e in result.epochs],
+        "Epoch": [e.i for e in result_sgd.epochs] + [e.i for e in result_mb.epochs],
+        "MSE": [e.MSE for e in result_sgd.epochs] + [e.MSE for e in result_mb.epochs],
+        "Method": ["SGD"] * len(result_sgd.epochs) + ["Mini-batch"] * len(result_mb.epochs),
     })
 
     # Reference lines for important MSE thresholds
@@ -264,13 +307,14 @@ def _(result):
 
     line = alt.Chart(_progress_df).mark_line(
         strokeWidth=1.5,
-        color="steelblue",
     ).encode(
         x=alt.X("Epoch:Q", title="Epoch"),
         y=alt.Y("MSE:Q", title="MSE"),
+        color=alt.Color("Method:N", scale=alt.Scale(domain=["SGD", "Mini-batch"], range=["#e45756", "steelblue"])),
         tooltip=[
             alt.Tooltip("Epoch:Q"),
             alt.Tooltip("MSE:Q", format=".4f"),
+            alt.Tooltip("Method:N"),
         ],
     )
 
@@ -288,18 +332,12 @@ def _(result):
         dy=-4,
         color="firebrick",
     ).encode(
-        x=alt.value(6),   # pixel offset from left edge
-        y="MSE:Q",
+        x=alt.value(6),
+        y="reference:Q",
         text="label:N",
     )
 
-    chart = (line + rules + labels).properties(
-        width="container",
-        height=350,
-        title="MSE over Epochs",
-    )
-
-    chart
+    line + rules + labels
     return
 
 
