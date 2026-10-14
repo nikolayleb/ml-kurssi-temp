@@ -632,6 +632,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tehtava-mini-batch-gradienttilaskeutuminen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tehtävä: Mini-batch gradienttilaskeutuminen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tehtävä: Mini-batch gradienttilaskeutuminen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#toteutus-ja-havainnot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Toteutus ja havainnot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -862,6 +890,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tehtava-mini-batch-gradienttilaskeutuminen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tehtävä: Mini-batch gradienttilaskeutuminen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tehtävä: Mini-batch gradienttilaskeutuminen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#toteutus-ja-havainnot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Toteutus ja havainnot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -953,6 +1009,23 @@
 </ul>
 <p><img alt="Ennusteet vs todelliset arvot" src="../../images/hill_climb_predictions.png" /></p>
 <p>Kuten kuvaajasta näkyy, ennusteet asettuvat tiiviisti suoralle ja pysyvät ±RMSE-virherajojen sisällä. Tehtävä havainnollisti hyvin optimoinnin perusidean. Menetelmässä on kuitenkin paljon satunnaisuutta ja arpapeliä, joten seuraavaksi siirrytään suoraviivaisempaan <strong>Gradient Descent</strong> -algoritmiin.</p>
+<h2 id="tehtava-mini-batch-gradienttilaskeutuminen">Tehtävä: Mini-batch gradienttilaskeutuminen</h2>
+<p>Tässä tehtävässä laajensin satunnaisen gradienttilaskeutumisen (SGD) koodia toteuttamalla mini-batch-gradienttilaskeutumisen (<code>minibatch_gd</code>). Lopuksi vertailin näiden kahden menetelmän eroja ja oppimisen vakautta.</p>
+<h3 id="toteutus-ja-havainnot">Toteutus ja havainnot</h3>
+<ol>
+<li><strong>Käyttöliittymä ja parametrit:</strong></li>
+<li>Tein erillisen liukuvalitsimen (<code>batch_slider</code>), jolla eräkokoa (<em>batch size</em>) voi säätää välillä 2–32.</li>
+<li>
+<p>Algoritmi sekoittaa datan satunnaisesti jokaisella epookilla, jakaa sen pienempiin osajoukkoihin (<em>mini-batch</em>) ja laskee virheen gradientin vektoroidusti kullekin erälle.</p>
+</li>
+<li>
+<p><strong>SGD:n ja Mini-batchin vertailu:</strong></p>
+</li>
+<li><strong>SGD (eräkoko = 1):</strong> Mallin painot päivitetään jokaisen yksittäisen datapisteen jälkeen. Koska yksittäisissä pisteissä on satunnaista kohinaa, oppimispolku heilahtelee ja optimointi on epävakaampaa.</li>
+<li><strong>Mini-batch (esim. eräkoko = 8):</strong> Malli laskee keskimääräisen gradientin pienen pistejoukon yli. Tämä vaimentaa yksittäisten poikkeavien havaintojen vaikutusta, jolloin MSE-virhe laskee tasaisemmin kohti minimiä.</li>
+</ol>
+<p><img alt="SGD vs Mini-batch -oppimisen edistyminen" src="../../images/minibatch_progress.png" /></p>
+<p><em>Kuva: Koulutuksen edistyminen (MSE) epookkien funktiona puhtaalla SGD:llä ja mini-batch-menetelmällä.</em></p>
 
 
 
