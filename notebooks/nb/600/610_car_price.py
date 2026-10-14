@@ -221,7 +221,7 @@ def _(df):
     print()
 
     print(f"Number of features: {len(feature_cols)}")
-    return TARGET, feature_cols
+    return TARGET, categorical_features, feature_cols, numeric_features
 
 
 @app.cell(hide_code=True)
@@ -257,7 +257,7 @@ def _(X, y):
 
     print("Train shape:", X_train.shape)
     print("Test shape :", X_test.shape)
-    return
+    return X_test, X_train, y_test, y_train
 
 
 @app.cell(hide_code=True)
@@ -268,11 +268,109 @@ def _(mo):
     return
 
 
+@app.cell
+def _(X_train, categorical_features, numeric_features, y_train):
+    # 1. Пайплайн предобработки для числовых признаков (заполнение медианой + масштабирование)
+    numeric_transformer = Pipeline(
+        steps=[
+            ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler()),
+        ]
+    )
+
+    # 2. Пайплайн для категориальных признаков (заполнение + One-Hot кодирование)
+    categorical_transformer = Pipeline(
+        steps=[
+            ("imputer", SimpleImputer(strategy="constant", fill_value="missing")),
+            ("onehot", OneHotEncoder(handle_unknown="ignore")),
+        ]
+    )
+
+    # 3. Объединяем числовые и категориальные признаки
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("num", numeric_transformer, numeric_features),
+            ("cat", categorical_transformer, categorical_features),
+        ]
+    )
+
+    # 4. Модель 1: Обычная линейная регрессия
+    linear_model = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("regressor", LinearRegression()),
+        ]
+    )
+    linear_model.fit(X_train, y_train)
+
+    # 5. Модель 2: Линейная регрессия с PolynomialFeatures
+    # Важно: полиномы строим только для числовых признаков, чтобы избежать взрыва размерности
+    numeric_poly_transformer = Pipeline(
+        steps=[
+            ("imputer", SimpleImputer(strategy="median")),
+            ("poly", PolynomialFeatures(degree=2, include_bias=False)),
+            ("scaler", StandardScaler()),
+        ]
+    )
+
+    preprocessor_poly = ColumnTransformer(
+        transformers=[
+            ("num", numeric_poly_transformer, numeric_features),
+            ("cat", categorical_transformer, categorical_features),
+        ]
+    )
+
+    poly_model = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor_poly),
+            ("regressor", LinearRegression()),
+        ]
+    )
+    poly_model.fit(X_train, y_train)
+
+    print("Модели успешно обучены!")
+    return linear_model, poly_model
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## Evaluate
     """)
+    return
+
+
+@app.cell
+def _(X_test, X_train, linear_model, poly_model, y_test, y_train):
+    import numpy as np
+
+
+    def calculate_metrics(model_name, model, X_tr, y_tr, X_te, y_te):
+        y_tr_pred = model.predict(X_tr)
+        y_te_pred = model.predict(X_te)
+
+        return {
+            "Model": model_name,
+            "Train MAE": metrics.mean_absolute_error(y_tr, y_tr_pred),
+            "Test MAE": metrics.mean_absolute_error(y_te, y_te_pred),
+            "Train RMSE": metrics.root_mean_squared_error(y_tr, y_tr_pred),
+            "Test RMSE": metrics.root_mean_squared_error(y_te, y_te_pred),
+            "Train R2": metrics.r2_score(y_tr, y_tr_pred),
+            "Test R2": metrics.r2_score(y_te, y_te_pred),
+        }
+
+
+    metrics_data = [
+        calculate_metrics(
+            "Linear Regression", linear_model, X_train, y_train, X_test, y_test
+        ),
+        calculate_metrics(
+            "Polynomial (degree=2)", poly_model, X_train, y_train, X_test, y_test
+        ),
+    ]
+
+    metrics_df = pl.DataFrame(metrics_data)
+    metrics_df
     return
 
 
@@ -285,6 +383,23 @@ def _(mo):
 
     ## Coefficients (Linear Regression)
     """)
+    return
+
+
+@app.cell
+def _(linear_model):
+    # Получаем названия признаков после One-Hot кодирования
+    names = linear_model.named_steps["preprocessor"].get_feature_names_out()
+    weights = linear_model.named_steps["regressor"].coef_
+
+    coef_df = (
+        pl.DataFrame({"Feature": names, "Coefficient": weights})
+        .with_columns(pl.col("Coefficient").abs().alias("Abs_Impact"))
+        .sort("Abs_Impact", descending=True)
+        .head(15)
+    )
+
+    coef_df
     return
 
 

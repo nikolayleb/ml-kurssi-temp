@@ -13,7 +13,7 @@ Viikon tärkeimmät asiat olivat:
 
 ---
 
-## 2. Tehtävä 600: Pienimmän neliösumman menetelmä (Marimo)
+## 2. Tehtävä: Pienimmän neliösumman menetelmä (Marimo)
 
 Tein tehtävän interaktiivisessa Marimo-muistiossa (`600_least_squares_problem.py`). Tein aluksi `drawdata`-työkalulla aaltomaisen pisteparven, jossa oli selkeää epälineaarisuutta. Sen jälkeen sovitin siihen erilaisia malleja.
 
@@ -56,3 +56,33 @@ Neljännen asteen polynomi seuraa datan aaltomaista muotoa tosi siististi. Se ei
 - **Analyyttinen vs. iteratiivinen:** Normaaliyhtälö antaa heti tarkan vastauksen pienelle datalle. Huono puoli on kuitenkin matriisin kääntämisen raskaus (aikavaativuus kasvaa jyrkästi piirteiden määrän mukaan) ja se, että liikaa toisistaan riippuvat piirteet estävät matriisin kääntämisen.
 - **Residuaalit:** Neliösumma rankaisee isoista heitoista todella paljon enemmän kuin pienistä virheistä. Siksi malli yrittää välttää kaukana olevia pisteitä.
 - **Monimutkaisuuden säätö:** Polynomin asteen kasvattaminen laskee aina opetusdatan virhettä. Ilman validointia liian iso aste kuitenkin johtaa ylisovittumiseen ja huonoon ennustekykyyn uudella datalla
+
+## Tehtävä: Auton hintaennustimen suorituskyky
+
+Tässä tehtävässä (`610_car_price.py`) ennustin autojen hintoja (MSRP). Käytin piirteinä sekä numeerisia että kategorisia tietoja.
+
+### Esikäsittely ja mallit
+
+Rakensin esikäsittelyn `Pipeline`- ja `ColumnTransformer`-työkaluilla:
+
+- **Numeeriset piirteet:** Paikkasin puuttuvat arvot mediaanilla ja skaalasin arvot (`StandardScaler`).
+- **Kategoriset piirteet:** Käsittelin puuttuvat tiedot ja muutin sarakkeet numeroiksi One-Hot-koodauksella (`OneHotEncoder`).
+
+Koulutin kaksi eri mallia: tavallisen lineaarisen regression (`LinearRegression`) sekä toisen asteen polynomimallin (`degree=2`), jossa toisen asteen termit tehtiin vain numeerisille piirteille.
+
+### Tulokset ja mittarit
+
+Testasin mallien toimintaa testidatalla ja laskin virheet (MAE, RMSE, R²):
+
+![Regressiomallien mittarit](../images/car_price_metrics.png)
+
+- **Lineaarinen malli:** Test MAE ≈ 3 649 $, RMSE ≈ 10 220 $, R² = 0.956
+- **Polynomimalli (aste 2):** Test MAE ≈ 3 437 $, RMSE ≈ 9 827 $, R² = 0.959
+
+Polynomiset piirteet paransivat tulosta hieman. Virheet pienenivät ja R² nousi, eikä malli lähtenyt ylisovittumaan. RMSE-luku on molemmilla melko korkea. Se johtuu siitä, että datassa on mukana todella kalliita ääripään autoja, joista neliöllinen virhe rankaisee kovaa.
+
+### Tärkeimmät piirteet (Kertoimet)
+
+![Piirteiden kertoimet](../images/car_price_coefficients.png)
+
+Eniten hintaa nostavat harvinaiset luksus- ja urheiluautot (kuten `Reventon`, `Landaulet` ja `Bugatti Veyron`). Näiden mallien kertoimet tuovat perushintaan heti satoja tuhansia tai jopa yli miljoonan dollarin lisän.
