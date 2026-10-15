@@ -100,7 +100,7 @@ def _(TARGET, df):
     print("[INFO] Target balance in training set:", y_train.value_counts())
 
     X_train
-    return X_test, X_train
+    return X_test, X_train, y_test, y_train
 
 
 @app.cell(hide_code=True)
@@ -135,7 +135,7 @@ def _(CATEGORICALS, NUMERICS, X_test, X_train):
     print("[INFO] OHE feature names:")
     for feat_name in ohe_feature_names:
         print("  - ", feat_name)
-    return
+    return X_test_encoded, X_train_encoded
 
 
 @app.cell(hide_code=True)
@@ -148,10 +148,51 @@ def _(mo):
     return
 
 
+@app.cell
+def _(X_train_encoded, y_train):
+    # Создаем Pipeline: заполнение пропусков -> стандартизация -> взвешенная логистическая регрессия
+    model_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler()),
+        ("classifier", LogisticRegression(class_weight="balanced", max_iter=1000, random_state=42))
+    ])
+
+    # Обучаем модель
+    model_pipeline.fit(X_train_encoded, y_train)
+    print("[INFO] Model trained successfully!")
+    return (model_pipeline,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     # Test
+    """)
+    return
+
+
+@app.cell
+def _(X_test_encoded, mo, model_pipeline, y_test):
+    # Предсказания и вероятности
+    y_pred = model_pipeline.predict(X_test_encoded)
+    y_pred_proba = model_pipeline.predict_proba(X_test_encoded)[:, 1]
+
+    # Расчет метрик
+    acc = accuracy_score(y_test, y_pred)
+    bal_acc = balanced_accuracy_score(y_test, y_pred)
+    prec = precision_score(y_test, y_pred)
+    rec = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    roc_auc = roc_auc_score(y_test, y_pred_proba)
+
+    mo.md(f"""
+    ### Test Set Performance
+    * **Accuracy:** `{acc:.4f}`
+    * **Balanced Accuracy:** `{bal_acc:.4f}`
+    * **Precision:** `{prec:.4f}`
+    * **Recall:** `{rec:.4f}`
+    * **F1-Score:** `{f1:.4f}`
+    * **ROC-AUC:** `{roc_auc:.4f}`
     """)
     return
 
@@ -163,6 +204,23 @@ def _(mo):
 
     Both `LogisticRegression` and `SGDClassifier(loss="log_loss")` fit the same linear-in-log-odds model, so their coefficients are directly comparable.
     """)
+    return
+
+
+@app.cell
+def _(X_train_encoded, mo, model_pipeline):
+    # Извлекаем веса модели
+    coefficients = model_pipeline.named_steps["classifier"].coef_[0]
+    feature_names = X_train_encoded.columns
+
+    # Формируем таблицу важности факторов
+    df_coef = pl.DataFrame({
+        "feature": feature_names,
+        "coefficient": coefficients,
+        "abs_coef": np.abs(coefficients)
+    }).sort("abs_coef", descending=True)
+
+    mo.ui.table(df_coef.select(["feature", "coefficient"]).to_pandas())
     return
 
 

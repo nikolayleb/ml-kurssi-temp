@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.6"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -119,7 +119,7 @@ def _(X, mo, w, y):
         y_hat_log_display,
         y_hat_bin_display
     ], justify="center", align="center", gap=3)
-    return y_hat_prob, y_np
+    return X_np, w_np, w_np_display, y_hat_prob, y_np
 
 
 @app.cell(hide_code=True)
@@ -144,7 +144,7 @@ def _(y_hat_prob, y_np):
 
     loss = binary_cross_entropy(y_np, y_hat_prob)
     loss
-    return
+    return binary_cross_entropy, loss
 
 
 @app.cell(hide_code=True)
@@ -166,9 +166,45 @@ def _(mo):
     return
 
 
-@app.function
-def binary_cross_entropy_gradient(X, y, y_hat):
-    pass
+@app.cell
+def _(
+    X_np,
+    binary_cross_entropy,
+    loss,
+    mo,
+    w_np,
+    w_np_display,
+    y_hat_prob,
+    y_np,
+):
+    def binary_cross_entropy_gradient(X, y, y_hat):
+        m = len(y)
+        return (1 / m) * (X.T @ (y_hat - y))
+
+    learning_rate = 0.0001
+    grad = binary_cross_entropy_gradient(X_np, y_np, y_hat_prob)
+    w_new = w_np - learning_rate * grad
+
+    w_new_display = mo.ui.matrix(
+        w_new,
+        disabled=True,
+        label="$w_{new}$",
+        precision=4
+    )
+
+    z_new = X_np @ w_new
+    y_hat_prob_new = sigmoid(z_new)
+    new_loss = binary_cross_entropy(y_np, y_hat_prob_new)
+
+    mo.vstack([
+        mo.hstack([w_np_display, w_new_display], justify="center", align="center", gap=3),
+        mo.md(f"""
+        * **Old loss:** `{loss:.6f}`
+        * **New loss:** `{new_loss:.6f}`
+        * **Difference:** `{new_loss - loss:.6f}`
+        """)
+    ])
+    return
 
 
 if __name__ == "__main__":

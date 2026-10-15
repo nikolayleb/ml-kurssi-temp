@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.23.6"
+__generated_with = "0.23.16"
 app = marimo.App(width="medium")
 
 with app.setup:
@@ -143,7 +143,7 @@ def _(W, X, Y, mo):
         align="center",
         gap=3,
     )
-    return Y_hat, Y_np
+    return W_display, W_np, X_np, Y_hat, Y_np
 
 
 @app.cell(hide_code=True)
@@ -184,7 +184,7 @@ def _(Y_hat, Y_np):
 
     loss = categorical_cross_entropy(Y_np, Y_hat)
     loss
-    return
+    return categorical_cross_entropy, loss
 
 
 @app.cell(hide_code=True)
@@ -210,9 +210,37 @@ def _(mo):
     return
 
 
-@app.function
-def softmax_cross_entropy_gradient(X, Y, Y_hat):
-    pass
+@app.cell
+def _(W_display, W_np, X_np, Y_hat, Y_np, categorical_cross_entropy, loss, mo):
+    def softmax_cross_entropy_gradient(X, Y, Y_hat):
+        n = len(Y)
+        return (1 / n) * (X.T @ (Y_hat - Y))
+
+    learning_rate = 0.001
+    grad_W = softmax_cross_entropy_gradient(X_np, Y_np, Y_hat)
+    W_new = W_np - learning_rate * grad_W
+
+    W_new_display = mo.ui.matrix(
+        W_new,
+        disabled=True,
+        column_labels=["class_0", "class_1", "class_2"],
+        label=r"$W_{new}$",
+        precision=4
+    )
+
+    Z_new = X_np @ W_new
+    Y_hat_new = softmax(Z_new)
+    new_loss = categorical_cross_entropy(Y_np, Y_hat_new)
+
+    mo.vstack([
+        mo.hstack([W_display, W_new_display], justify="center", align="center", gap=3),
+        mo.md(f"""
+        * **Old loss:** `{loss:.6f}`
+        * **New loss:** `{new_loss:.6f}`
+        * **Difference:** `{new_loss - loss:.6f}`
+        """)
+    ])
+    return
 
 
 if __name__ == "__main__":
