@@ -1,7 +1,26 @@
 # Self-Evaluation / Itsearviointi
 
-Kirjoita tähän realistinen itsearviointi. Huomaa, että arvioithan itsesi etkä kurssia. Perustele siis, miksi ansaitset mielestäsi arvosanan x/5, ja mitä olisit kenties voinut tehdä toisin, jotta arvosana olisi korkeampi. Kuinka muutat toimintaasi tulevilla kurssilla? 
+## Arvosanan perustelut
 
-* Ohjeet itsearviointiin löytyvät [Oppimispäiväkirja 101 > Itsearviointi](https://sourander.github.io/oat/itsearviointi/) -sivulta.
-* Arviointityökalu löytyy: [Arviointityökalu](https://arviointi.munpaas.com/)-sivulta.
+Oma arvosanaehdotukseni kurssista on **4 / 5** (tai arvosanojen 3 ja 4 välillä).
+
+Olen tehnyt kaikki kurssin viikkotehtävät (viikot 38–45) alusta loppuun. En vain ajanut annettua koodia, vaan tein vaaditut kokeilut, analysoin tuloksia ja lisäsin visualisoinnit jokaiseen raporttiin. Yritin aina ymmärtää ja selittää omin sanoin, miksi malli toimii ja käyttäytyy tietyllä tavalla, vaikka se ei aina ollut helppoa eikä aina onnistunut täydellisesti.
+
+Arvosanani ei ole 5, koska minulla on vielä paljon opittavaa ja kehitettävää. En ymmärtänyt kaikkia materiaaleja täysin. Lisäksi huomasin, että osa asioista, jotka ymmärsin tehtävää tehdessä, unohtui melko nopeasti sen jälkeen. 
+
+Tulevilla kursseilla aion lukea enemmän teoriaa jo ennen kuin aloitan käytännön tehtävien tekemisen, jotta opitut asiat jäisivät paremmin mieleen.
+
+---
+
+### Arviointikriteerit
+
+**Tietotaidot:** 4 - Korkean tietotaidon itsenäisesti osoittava opiskelija hallitsee kurssilla käsitellyn käytännön ja teorian todistettavasti. Todistamiseen käytetään kuvia, lähteitä, taulukoita ja koodista tehtyjä nostoja. (40%)
+
+**Asiatyyli:** 4 - Teksti on asiatyyliä ja raportti on selkeästi jäsennelty Material for MkDocs -sivustoksi. Kuvat, koodit ja taulukot tukevat sisältöä. (20%)
+
+**Opiskeluaktiivisuus:** 4 - Aktiivinen opiskelu ja säännöllinen Git-versionhallinnan käyttö näkyy commit-logeissa. Kaikki viikot on suoritettu. (20%)
+
+**Lähdeviitteet:** 4 - Hyvin käytetyt lähdeviitteet tukevat kirjoituksen argumentteja. Lähteitä on käytetty systemaattisesti ja lukijalle selkeää. (20%)
+
+**Final Grade:** 4 / 5
 
